@@ -5,7 +5,7 @@ class Item extends React.Component{
 
   render(){
     return(
-      "Item"
+      <span>{this.props.data.name}</span>
     )
   }
 }
