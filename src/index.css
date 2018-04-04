@@ -3,3 +3,21 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+.container{
+  width:80%;
+  margin: 0 auto;
+  height: 600px;
+  box-shadow: 4px 4px 4px 2px #aaa;
+}
+
+.cart-table tr td{
+border: 1px solid #666;
+}
+.cart-table{
+  text-align: center;
+}
+.item-remove{
+  color:white;
+  background-color: red;
+  cursor: pointer;
+}

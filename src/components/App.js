@@ -22,7 +22,7 @@ class App extends Component {
       total = this.getTotal(items)
       this.setState({items,total})
     }else if(type === 'REMOVE'){
-      items = this.state.filter((it)=> it.id !== item.id)
+      items = this.state.items.filter((it)=> it.id !== item.id)
       total = this.getTotal(items)
       this.setState({items,total})
     }
@@ -31,7 +31,7 @@ class App extends Component {
     return (
       <div className="container">
       <Header handleItem = {this.handleItem}/>
-      <Main items = {this.state.items}/>
+      <Main handleDelete={this.handleItem} items = {this.state.items}/>
       <Footer total = {this.state.total}/>
       </div>
     );
