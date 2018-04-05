@@ -4,7 +4,7 @@ class Footer extends React.Component{
 
   render(){
     return(
-      <span>Total: {this.props.total}</span>
+      <span>Total: {this.props.totalBill}</span>
     )
   }
 }

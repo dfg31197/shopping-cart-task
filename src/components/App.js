@@ -7,24 +7,24 @@ import '../App.css';
 class App extends Component {
   state = {
     items:[],
-    total: 0
+    totalBill: 0
   }
  getTotal = (items)=>{
    return items.reduce((acc,val)=>{
-     return acc + val.total;
+     return acc + val.currentItemTotal;
    },0)
  }
   handleItem = (type,item)=>{
     let items;
-    let total;
+    let totalBill;
       if(type === 'ADD'){
       items = [...this.state.items,item]
-      total = this.getTotal(items)
-      this.setState({items,total})
+      totalBill = this.getTotal(items)
+      this.setState({items,totalBill})
     }else if(type === 'REMOVE'){
       items = this.state.items.filter((it)=> it.id !== item.id)
-      total = this.getTotal(items)
-      this.setState({items,total})
+      totalBill = this.getTotal(items)
+      this.setState({items,totalBill})
     }
   }
   render() {
@@ -32,7 +32,7 @@ class App extends Component {
       <div className="container">
       <Header handleItem = {this.handleItem}/>
       <Main handleDelete={this.handleItem} items = {this.state.items}/>
-      <Footer total = {this.state.total}/>
+      <Footer totalBill = {this.state.totalBill}/>
       </div>
     );
   }

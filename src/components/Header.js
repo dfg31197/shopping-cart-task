@@ -12,37 +12,45 @@ class Header extends React.Component{
     allow: false,
   }
 
+  formValidator =(key,obj,prev)=>{
+    const value = obj.label[key]
+
+    // TODO: Remove redundancy
+    const validations = {
+      name: '^[a-zA-Z0-9]*$',
+      price: '^[0-9]*$',
+      amount: '^[0-9]*$'
+    }
+    const pattern = new RegExp(validations[key],'i')
+    if(!pattern.test(value)){
+      obj.label[key] = prev.label[key]
+    }
+
+    // TODO: Improve button toggle functionality
+    obj.allow = true;
+    const keys = Object.keys(obj.label)
+    for(let that of keys){
+      if(obj.label[that] === '' || obj.label[that] === 0){
+        obj.allow = false
+      }
+    }
+    return obj;
+  }
+
   handleChange(e,type){
     const keys = Object.keys(this.state.label)
     const {value} = e.target
-    this.setState((prev)=>{
-      return {
-        ...prev,
-        label:{
-          ...prev.label,
-          [type]: value
-        }
-      }
+    const tempObj = {...this.state,label:{...this.state.label,[type]:value}}
+    const resultObj = this.formValidator(type,tempObj,{...this.state})
 
-    },()=>{
-      let bool = true;
-      for(let key of keys){
-        if(this.state.label[key] === '' || this.state.label[key] === 0)
-        {
-          bool = false
-          break;
-        }
-        //console.log(this.state.label[key])
-      }
-      this.setState({allow:bool})
-    })
+    this.setState((prev)=>resultObj)
 
   }
   handleSubmit(){
     const {name,price,amount} = this.state.label
-    const total = price*amount;
+    const currentItemTotal = price*amount;
     const id = `${new Date().getTime()}`
-    this.props.handleItem('ADD',{id,name,price,amount,total})
+    this.props.handleItem('ADD',{id,name,price,amount,currentItemTotal})
     this.setState({
       label:{
         name: '',
@@ -50,15 +58,15 @@ class Header extends React.Component{
         amount: '',
       },
       allow: false,
-    },()=>{console.log(this.state)})
+    })
   }
 
   render(){
     const label = Object.keys(this.state.label)
     //console.log(this.state)
     return (<div className="shopping-header">
-    {label.map((lab)=><input key={lab} name={lab} type={lab === "price" || lab === "amount"?'number':'text'} value={this.state.label[lab]} onChange={(e)=>{this.handleChange(e,lab)}} />)}
-    <button disabled={!this.state.allow} onClick={this.handleSubmit.bind(this)}> Add</button>
+    {label.map((lab)=><input key={lab} name={lab} value={this.state.label[lab]} placeholder={lab} onChange={(e)=>{this.handleChange(e,lab)}} />)}
+    <button disabled={!this.state.allow} onClick={(e)=>{this.handleSubmit(e)}}> Add</button>
     </div>)
   }
 }

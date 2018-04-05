@@ -9,14 +9,14 @@ class Item extends React.Component{
   }
 
   render(){
-    const {name,price,amount,total} = this.props.data
+    const {name,price,amount,currentItemTotal} = this.props.data
     return(
       <tr>
       <td>{name}</td>
       <td>{price}</td>
       <td>{amount}</td>
-      <td>{total}</td>
-      <td className="item-remove" onClick={this.deleteLI.bind(this)}>X</td>
+      <td>{currentItemTotal}</td>
+      <td className="item-remove" onClick={(arg)=>{this.deleteLI(arg)}}>X</td>
       </tr>
     )
   }
