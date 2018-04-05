@@ -1,19 +1,31 @@
 import React from 'react'
 
+const INIT_STATE = {
+  label:{
+    name: {
+      inputVal:'',
+      valid: false
+    },
+    price: {
+      inputVal:'',
+      valid: false
+    },
+    amount: {
+      inputVal:'',
+      valid: false
+    },
+  },
+  filled:0,
+  allow: false,
+}
 
 class Header extends React.Component{
 
-  state={
-    label:{
-      name: '',
-      price: '',
-      amount: '',
-    },
-    allow: false,
-  }
+  state = {...INIT_STATE}
+LABEL_KEYS = Object.keys(this.state.label)
 
   formValidator =(key,obj,prev)=>{
-    const value = obj.label[key]
+    const value = obj.label[key].inputVal
 
     // TODO: Remove redundancy
     const validations = {
@@ -23,49 +35,59 @@ class Header extends React.Component{
     }
     const pattern = new RegExp(validations[key],'i')
     if(!pattern.test(value)){
-      obj.label[key] = prev.label[key]
+      obj.label[key].inputVal = prev.label[key].inputVal
     }
-
-    // TODO: Improve button toggle functionality
-    obj.allow = true;
-    const keys = Object.keys(obj.label)
-    for(let that of keys){
-      if(obj.label[that] === '' || obj.label[that] === 0){
-        obj.allow = false
+    console.log(obj.label[key].inputVal)
+    if(obj.label[key].inputVal !== '' && obj.label[key].inputVal !== 0){
+      if(obj.label[key].valid === false){
+        obj.label[key].valid = true
+        obj.filled += 1;
+      }
+    }else{
+      if(obj.label[key].valid === true){
+        obj.label[key].valid = false;
+        obj.filled -=1;
       }
     }
+    // TODO: Improve button toggle functionality
+
     return obj;
   }
 
   handleChange(e,type){
-    const keys = Object.keys(this.state.label)
     const {value} = e.target
-    const tempObj = {...this.state,label:{...this.state.label,[type]:value}}
+    const tempObj = {
+      ...this.state,
+      label:{
+        ...this.state.label,
+        [type]:{
+            inputVal: value,
+            valid: this.state.label[type].valid
+        }
+      }
+    }
     const resultObj = this.formValidator(type,tempObj,{...this.state})
 
     this.setState((prev)=>resultObj)
 
   }
+
+  checkAndToggleButton=(e)=>{
+    // Least terrible solution?
+    this.setState((prev)=>({allow:prev.filled === this.LABEL_KEYS.length}))
+  }
+
   handleSubmit(){
     const {name,price,amount} = this.state.label
-    const currentItemTotal = price*amount;
+    const currentItemTotal = price.inputVal*amount.inputVal;
     const id = `${new Date().getTime()}`
-    this.props.handleItem('ADD',{id,name,price,amount,currentItemTotal})
-    this.setState({
-      label:{
-        name: '',
-        price: '',
-        amount: '',
-      },
-      allow: false,
-    })
+    this.props.handleItem('ADD',{id,name:name.inputVal,price:price.inputVal,amount:amount.inputVal,currentItemTotal})
+    this.setState({...INIT_STATE})
   }
 
   render(){
-    const label = Object.keys(this.state.label)
-    //console.log(this.state)
     return (<div className="shopping-header">
-    {label.map((lab)=><input key={lab} name={lab} value={this.state.label[lab]} placeholder={lab} onChange={(e)=>{this.handleChange(e,lab)}} />)}
+    {this.LABEL_KEYS.map((lab)=><input key={lab} name={lab} value={this.state.label[lab].inputVal} placeholder={lab} onMouseOut={(e)=>{this.checkAndToggleButton()}} onBlur={(e)=>{this.checkAndToggleButton()}} onChange={(e)=>{this.handleChange(e,lab)}} />)}
     <button disabled={!this.state.allow} onClick={(e)=>{this.handleSubmit(e)}}> Add</button>
     </div>)
   }
