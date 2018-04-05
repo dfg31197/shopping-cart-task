@@ -49,7 +49,13 @@ LABEL_KEYS = Object.keys(this.state.label)
         obj.filled -=1;
       }
     }
-    // TODO: Improve button toggle functionality
+
+    if(obj.filled === this.LABEL_KEYS.length){
+      obj.allow = true
+    }else{
+      obj.allow = false;
+    }
+
 
     return obj;
   }
@@ -72,10 +78,7 @@ LABEL_KEYS = Object.keys(this.state.label)
 
   }
 
-  checkAndToggleButton=(e)=>{
-    // Least terrible solution?
-    this.setState((prev)=>({allow:prev.filled === this.LABEL_KEYS.length}))
-  }
+
 
   handleSubmit(){
     const {name,price,amount} = this.state.label
@@ -87,7 +90,7 @@ LABEL_KEYS = Object.keys(this.state.label)
 
   render(){
     return (<div className="shopping-header">
-    {this.LABEL_KEYS.map((lab)=><input key={lab} name={lab} value={this.state.label[lab].inputVal} placeholder={lab} onMouseOut={(e)=>{this.checkAndToggleButton()}} onBlur={(e)=>{this.checkAndToggleButton()}} onChange={(e)=>{this.handleChange(e,lab)}} />)}
+    {this.LABEL_KEYS.map((lab)=><input key={lab} name={lab} value={this.state.label[lab].inputVal} placeholder={lab}  onChange={(e)=>{this.handleChange(e,lab)}} />)}
     <button disabled={!this.state.allow} onClick={(e)=>{this.handleSubmit(e)}}> Add</button>
     </div>)
   }
